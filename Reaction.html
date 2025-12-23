@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArzXD – Tool to Send 1K Reactions to Channel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-dark: #0a0a0a;
+      --primary-black: #111111;
+      /* Menggunakan warna ungu baru #a02dff */
+      --primary-purple: #a02dff; 
+      --secondary-purple: #7b2eff;
+      --accent-purple: #c17aff;
+      --light-purple: #d8b4ff;
+      --text-primary: #e6e3e3;
+      --text-secondary: #bababa;
+      --text-muted: #888888;
+      /* RGBA berdasarkan #a02dff (160, 45, 255) */
+      --border-color: rgba(160, 45, 255, 0.2);
+      --shadow-color: rgba(160, 45, 255, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-dark);
+      color: var(--text-primary);
+      /* Gradient background diubah ke ungu */
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(160, 45, 255, 0.08) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(123, 46, 255, 0.08) 0%, transparent 20%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(to right, transparent 98%, rgba(160, 45, 255, 0.03) 100%),
+        linear-gradient(to bottom, transparent 98%, rgba(160, 45, 255, 0.03) 100%);
+      background-size: 30px 30px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      margin: 20px auto;
+      padding: 30px;
+      background: var(--primary-black);
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(160, 45, 255, 0.1),
+        0 0 30px rgba(160, 45, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(160, 45, 255, 0.05) 0%, transparent 70%);
+      z-index: -1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 25%;
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--primary-purple), transparent);
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-purple);
+      box-shadow: 0 0 20px rgba(160, 45, 255, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(160, 45, 255, 0.6);
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(to right, #a02dff, #d8b4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .input-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      color: var(--primary-purple);
+      font-size: 18px;
+      z-index: 1;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      border-radius: 12px;
+      border: 1px solid rgba(160, 45, 255, 0.2);
+      outline: none;
+      font-size: 15px;
+      background: rgba(20, 20, 20, 0.8);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      border-color: var(--primary-purple);
+      box-shadow: 0 0 0 2px rgba(160, 45, 255, 0.2);
+      background: rgba(25, 25, 25, 0.9);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+      color: white;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(160, 45, 255, 0.4);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+      min-height: 20px;
+      background: rgba(160, 45, 255, 0.08);
+      border: 1px solid rgba(160, 45, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .success {
+      color: #4dff88;
+      background: rgba(77, 255, 136, 0.08);
+      border-color: rgba(77, 255, 136, 0.2);
+    }
+
+    .error {
+      color: #ffb3b3;
+      background: rgba(255, 45, 45, 0.1);
+      border-color: rgba(255, 45, 45, 0.2);
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 20px;
+      border-top: 1px solid rgba(160, 45, 255, 0.1);
+    }
+
+    .pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--primary-purple);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(160, 45, 255, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(160, 45, 255, 0); }
+      100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(160, 45, 255, 0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-container">
+        <img class="logo" src="https://files.catbox.moe/fbfh8b.jpeg" alt="Logo ArzXD" />
+      </div>
+      <div class="title">ArzXD</div>
+      <div class="subtitle">Tool to Send 1K Reactions to WhatsApp Channel</div>
+    </div>
+
+    <div class="form-group">
+      <label for="link"><span class="pulse"></span>Link Post Channel</label>
+      <div class="input-container">
+        <div class="input-icon">🔗</div>
+        <input type="text" id="link" placeholder="https://whatsapp.com/channel/..." />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="emoji"><span class="pulse"></span>Reaction Emoji</label>
+      <div class="input-container">
+        <div class="input-icon">💜</div>
+        <input type="text" id="emoji" placeholder="Contoh: 👋, ❤️, 😂, 👍" />
+      </div>
+      <div class="emoji-preview" id="emojiPreview"></div>
+    </div>
+
+    <button class="btn" onclick="sendReaction()">
+      <span>🚀 SEND REACTION</span>
+    </button>
+
+    <div class="result" id="result">
+      Masukkan link dan emoji untuk mengirim reaksi
+    </div>
+  </div>
+
+  <footer>
+    <div class="copyright">© Copyright. ArzXD - 2025</div>
+  </footer>
+
+  <script>
+    // Logic JavaScript tetap sama seperti sebelumnya
+    const linkInput = document.getElementById('link');
+    const emojiInput = document.getElementById('emoji');
+    const emojiPreview = document.getElementById('emojiPreview');
+    const resultDiv = document.getElementById('result');
+    
+    emojiInput.addEventListener('input', function() {
+      const emoji = emojiInput.value.trim();
+      emojiPreview.innerHTML = emoji ? `Preview: ${emoji}` : '';
+    });
+    
+    async function sendReaction() {
+      const link = linkInput.value.trim();
+      const emoji = emojiInput.value.trim();
+
+      if (!link || !link.includes('whatsapp.com/channel/')) {
+        showResult('Link channel WhatsApp tidak valid!', 'error');
+        return;
+      }
+      
+      if (!emoji) {
+        showResult('Emoji reaksi harus diisi!', 'error');
+        return;
+      }
+      
+      showResult('<span class="pulse"></span> Mengirim reaksi... Harap tunggu', 'info');
+      
+      try {
+        const apiUrl = `https://aliicia.my.id/api/react?link=${encodeURIComponent(link)}&emoji=${encodeURIComponent(emoji)}`;
+        const res = await fetch(apiUrl);
+        if (res.ok) {
+          showResult('✅ Reaksi berhasil dikirim! 1000 reaksi telah diproses.', 'success');
+        } else {
+          showResult('⚠️ Gagal mengirim reaksi. Coba lagi.', 'error');
+        }
+      } catch (err) {
+        showResult('⚠️ Kesalahan koneksi internet.', 'error');
+      }
+    }
+    
+    function showResult(message, type) {
+      resultDiv.innerHTML = message;
+      resultDiv.className = 'result ' + type;
+    }
+  </script>
+</body>
+</html>
